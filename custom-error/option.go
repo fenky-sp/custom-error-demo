@@ -25,16 +25,14 @@ func WithPIC(input string) Option {
 	}
 }
 
-func WithRequest(req interface{}) Option {
-	// TODO fenky
+func WithRequest(input interface{}) Option {
 	return func(t *Metadata) {
-		t.Request = fmt.Sprintf("%v", req)
+		t.Request = fmt.Sprintf("%+v", input)
 	}
 }
 
-func WithResponse(response interface{}) Option {
-	// TODO fenky
+func WithResponse(input interface{}) Option {
 	return func(t *Metadata) {
-		t.Response = fmt.Sprintf("%v", response)
+		t.Response = fmt.Sprintf("%+v", input)
 	}
 }

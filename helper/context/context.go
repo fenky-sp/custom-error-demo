@@ -9,37 +9,41 @@ import (
 
 type (
 	TraceFunction string
-	FuncName      string
+	Function      string
 	Trace         string
 	contextKey    string
 )
 
 const (
-	KeyFuncName contextKey = "func_name"
+	KeyFunction contextKey = "func"
 	KeyTrace    contextKey = "trace"
 )
 
 // TraceFunction.SetContext
 // set TraceFunction context value
 func (tf TraceFunction) SetContext(ctx context.Context) context.Context {
-	// TODO fenky check traceString
-	var traceString string
+	var (
+		function string = string(tf)
+		trace    string
+	)
 
-	// get file module trace function
+	// get caller file path
 	_, file, _, ok := runtime.Caller(2)
 	if !ok {
-		traceString = string(tf)
-		return SetContext(ctx, FuncName(traceString), Trace(traceString))
+		return SetContext(ctx, Trace(function), Function(function))
 	}
 
-	str := strings.Split(file, "/")
-	if len(str) < 5 {
-		traceString = string(tf)
-		return SetContext(ctx, FuncName(traceString), Trace(traceString))
+	// split file path
+	filePaths := strings.Split(file, "/")
+	if len(filePaths) <= 5 {
+		trace = strings.Join(filePaths, "/")
+		return SetContext(ctx, Trace(fmt.Sprintf("%s-(%s)", trace, function)), Function(function))
 	}
 
-	traceString = fmt.Sprintf("%s.%s.%s.%s.%s", str[len(str)-5], str[len(str)-4], str[len(str)-3], str[len(str)-2], string(tf))
-	return SetContext(ctx, FuncName(traceString), Trace(traceString))
+	// trim file path
+	filePaths = filePaths[len(filePaths)-5:]
+	trace = strings.Join(filePaths, "/")
+	return SetContext(ctx, Trace(fmt.Sprintf("%s-(%s)", trace, function)), Function(function))
 }
 
 // get TraceFunction context value
@@ -48,14 +52,14 @@ func (tf TraceFunction) GetContext(ctx context.Context) string {
 }
 
 // set FuncName context value
-func (f FuncName) SetContext(ctx context.Context) context.Context {
-	return context.WithValue(ctx, KeyFuncName, string(f))
+func (f Function) SetContext(ctx context.Context) context.Context {
+	return context.WithValue(ctx, KeyFunction, string(f))
 }
 
 // get FuncName context value
-func (f FuncName) GetContext(ctx context.Context) string {
+func (f Function) GetContext(ctx context.Context) string {
 	var value string
-	if val, ok := ctx.Value(KeyFuncName).(string); ok {
+	if val, ok := ctx.Value(KeyFunction).(string); ok {
 		value = val
 	}
 	return value
@@ -65,7 +69,7 @@ func (f FuncName) GetContext(ctx context.Context) string {
 func (t Trace) SetContext(ctx context.Context) context.Context {
 	var traceString string
 	if _, ok := ctx.Value(KeyTrace).(string); ok {
-		traceString = fmt.Sprintf("%s-%s", ctx.Value(KeyTrace).(string), string(t))
+		traceString = fmt.Sprintf("%s#%s", ctx.Value(KeyTrace).(string), string(t))
 	} else {
 		traceString = string(t)
 	}

@@ -64,9 +64,8 @@ func (m *Metadata) Error() string {
 	data["error"] = m.Err.Error()
 
 	if m.Context != nil {
-		// TODO fenky check
 		data["trace"] = m.Context.Value(ctxHlp.KeyTrace)
-		data["func_name"] = m.Context.Value(ctxHlp.KeyFuncName)
+		data["func"] = m.Context.Value(ctxHlp.KeyFunction)
 	}
 
 	if len(m.Lines) != 0 {
