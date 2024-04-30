@@ -4,7 +4,7 @@ import "context"
 
 type CustomError interface {
 	error
-	WithOption(...Option) CustomError
+	WithOptions(...Option) CustomError
 }
 
 func WrapError(
@@ -18,7 +18,7 @@ func WrapError(
 		return nil
 	}
 
-	return create(err).WithOption(
+	return create(err).WithOptions(
 		WithContext(ctx),
 		WithErrorType(errorType),
 		WithPIC(pic),

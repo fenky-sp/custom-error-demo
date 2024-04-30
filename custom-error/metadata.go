@@ -9,7 +9,7 @@ import (
 	ctxHlp "github.com/fenky-sp/custom-error-demo/helper/context"
 )
 
-type Metadata struct {
+type ErrorMetadata struct {
 	Context   context.Context
 	Err       error
 	ErrorType string
@@ -21,15 +21,15 @@ type Metadata struct {
 
 func create(rootErr error) CustomError {
 	var (
-		err = &Metadata{}
+		err = &ErrorMetadata{}
 	)
 
-	if _, ok := rootErr.(*Metadata); !ok {
+	if _, ok := rootErr.(*ErrorMetadata); !ok {
 		if rootErr != nil {
 			err.Err = rootErr
 		}
 	} else {
-		err = rootErr.(*Metadata)
+		err = rootErr.(*ErrorMetadata)
 	}
 
 	_, file, line, ok := runtime.Caller(2)
@@ -42,7 +42,14 @@ func create(rootErr error) CustomError {
 	return err
 }
 
-func (m *Metadata) Error() string {
+func (m *ErrorMetadata) WithOptions(opts ...Option) CustomError {
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+func (m *ErrorMetadata) Error() string {
 	data := make(map[string]interface{})
 
 	if m.Request != "" {
@@ -77,9 +84,14 @@ func (m *Metadata) Error() string {
 	return string(result)
 }
 
-func (m *Metadata) WithOption(opts ...Option) CustomError {
-	for _, opt := range opts {
-		opt(m)
+// GetError gets error only from custom error
+func GetError(err error) error {
+	switch err.(type) {
+	case *ErrorMetadata:
+		if em, ok := err.(*ErrorMetadata); ok {
+			return em.Err
+		}
 	}
-	return m
+
+	return err
 }

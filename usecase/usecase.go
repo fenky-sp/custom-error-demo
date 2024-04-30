@@ -12,7 +12,9 @@ import (
 func UsecaseFunc(ctx context.Context, input model.UsecaseInput) (output model.UsecaseOutput, err error) {
 	ctx = ctxHlp.SetContext(ctx, ctxHlp.TraceFunction(funcHlp.GetFunctionName(UsecaseFunc)))
 
-	_, err = repository.RepositoryFunc(ctx, model.RepositoryInput{})
+	_, err = repository.RepositoryFunc(ctx, model.RepositoryInput{
+		RequestTimeUnix: input.RequestTimeUnix,
+	})
 
 	return
 }
