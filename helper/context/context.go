@@ -28,9 +28,20 @@ func (tf TraceFunction) SetContext(ctx context.Context) context.Context {
 	)
 
 	// get caller file path
-	_, file, _, ok := runtime.Caller(2)
+	pc, file, _, ok := runtime.Caller(2)
 	if !ok {
 		return SetContext(ctx, Trace(function), Function(function))
+	}
+
+	// get function if empty
+	if function == "" {
+		details := runtime.FuncForPC(pc)
+		if details != nil {
+			detailsSplit := strings.Split(details.Name(), ".")
+			if len(detailsSplit) != 0 {
+				function = detailsSplit[len(detailsSplit)-1]
+			}
+		}
 	}
 
 	// split file path
@@ -50,6 +61,10 @@ func (tf TraceFunction) SetContext(ctx context.Context) context.Context {
 // get TraceFunction context value
 func (tf TraceFunction) GetContext(ctx context.Context) string {
 	return string(tf)
+}
+
+func DefaultTraceFunctionOption() Option {
+	return TraceFunction("")
 }
 
 // Function.SetContext
