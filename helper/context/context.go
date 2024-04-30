@@ -46,17 +46,20 @@ func (tf TraceFunction) SetContext(ctx context.Context) context.Context {
 	return SetContext(ctx, Trace(fmt.Sprintf("%s-(%s)", trace, function)), Function(function))
 }
 
+// TraceFunction.GetContext
 // get TraceFunction context value
 func (tf TraceFunction) GetContext(ctx context.Context) string {
 	return string(tf)
 }
 
-// set FuncName context value
+// Function.SetContext
+// set Function context value
 func (f Function) SetContext(ctx context.Context) context.Context {
 	return context.WithValue(ctx, KeyFunction, string(f))
 }
 
-// get FuncName context value
+// Function.GetContext
+// get Function context value
 func (f Function) GetContext(ctx context.Context) string {
 	var value string
 	if val, ok := ctx.Value(KeyFunction).(string); ok {
@@ -65,6 +68,7 @@ func (f Function) GetContext(ctx context.Context) string {
 	return value
 }
 
+// Trace.SetContext
 // set Trace context value
 func (t Trace) SetContext(ctx context.Context) context.Context {
 	var traceString string
@@ -77,6 +81,7 @@ func (t Trace) SetContext(ctx context.Context) context.Context {
 	return temp
 }
 
+// Trace.GetContext
 // get Trace context value
 func (t Trace) GetContext(ctx context.Context) string {
 	var value string
@@ -92,9 +97,9 @@ type Option interface {
 }
 
 // set context values from multiple options into context
-func SetContext(ctx context.Context, opt ...Option) context.Context {
-	for _, o := range opt {
-		ctx = o.SetContext(ctx)
+func SetContext(ctx context.Context, opts ...Option) context.Context {
+	for _, opt := range opts {
+		ctx = opt.SetContext(ctx)
 	}
 	return ctx
 }
