@@ -36,3 +36,13 @@ func WithResponse(input interface{}) Option {
 		t.Response = fmt.Sprintf("%+v", input)
 	}
 }
+
+func (m *ErrorMetadata) WithRequest(input interface{}) *ErrorMetadata {
+	m.Request = fmt.Sprintf("%+v", input)
+	return m
+}
+
+func (m *ErrorMetadata) WithResponse(input interface{}) *ErrorMetadata {
+	m.Response = fmt.Sprintf("%+v", input)
+	return m
+}

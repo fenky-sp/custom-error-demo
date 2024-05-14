@@ -12,9 +12,11 @@ import (
 func main() {
 	handler := handlerImpl.New()
 	_, err := handler.HandlerFunc(context.Background(), model.HandlerInput{})
-	fmt.Printf("DEBUG custom err (1): %+v\n", err.Error())
-	fmt.Println()
-	fmt.Printf("DEBUG custom err (2): %+v\n", err)
-	fmt.Println()
-	fmt.Printf("DEBUG just err: %+v\n", customerror.GetError(err))
+	if err != nil {
+		fmt.Printf("DEBUG custom err (1): %+v\n", err.Error())
+		fmt.Println()
+		fmt.Printf("DEBUG custom err (2): %+v\n", err)
+		fmt.Println()
+		fmt.Printf("DEBUG just err: %+v\n", customerror.GetError(err))
+	}
 }

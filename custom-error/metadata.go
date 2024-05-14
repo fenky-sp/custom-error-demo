@@ -95,3 +95,35 @@ func GetError(err error) error {
 
 	return err
 }
+
+func Init(
+	ctx context.Context,
+	rootErr error,
+	pic string,
+	errorType string,
+) *ErrorMetadata {
+	var (
+		err = &ErrorMetadata{}
+	)
+
+	if _, ok := rootErr.(*ErrorMetadata); !ok {
+		if rootErr != nil {
+			err.Err = rootErr
+		}
+	} else {
+		err = rootErr.(*ErrorMetadata)
+	}
+
+	_, file, line, ok := runtime.Caller(2)
+	if !ok {
+		return err
+	}
+
+	err.Lines = append(err.Lines, fmt.Sprintf("%v:%v", file, line))
+
+	return err
+}
+
+func (m *ErrorMetadata) Create() CustomError {
+	return m
+}
