@@ -35,7 +35,7 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 	// 		customerror.WithRequest(input),
 	// 	)
 
-	// // opt 3
+	// // opt 3 - fluent interface design pattern
 	// err = customerror.
 	// 	Init(ctx,
 	// 		errors.Join(errors.New("expected repository error 1"), errors.New("expected repository error 2")),
@@ -43,6 +43,7 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 	// 		customerror.ErrorTypeDB,
 	// 	).
 	// 	WithRequest(input).
+	// 	WithResponse("dummy response").
 	// 	Create()
 
 	return
