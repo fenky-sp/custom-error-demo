@@ -3,8 +3,9 @@ package helper
 import (
 	"context"
 	"fmt"
-	"runtime"
 	"strings"
+
+	rtHlp "github.com/fenky-sp/custom-error-demo/helper/runtime"
 )
 
 type (
@@ -24,37 +25,23 @@ const (
 func (tf TraceFunction) SetContext(ctx context.Context) context.Context {
 	var (
 		function string = string(tf)
-		trace    string
 	)
 
-	// get caller file path
-	pc, file, _, ok := runtime.Caller(2)
-	if !ok {
+	// get invoker information
+	invoker := rtHlp.GetInvokerInformation(2)
+	if !invoker.OK {
 		return SetContext(ctx, Trace(function), Function(function))
 	}
 
-	// get function if empty
-	if function == "" {
-		details := runtime.FuncForPC(pc)
-		if details != nil {
-			detailsSplit := strings.Split(details.Name(), ".")
-			if len(detailsSplit) != 0 {
-				function = detailsSplit[len(detailsSplit)-1]
-			}
+	// get function name if empty
+	if function == "" && invoker.Fn != nil {
+		detailsSplit := strings.Split(invoker.Fn.Name(), ".")
+		if len(detailsSplit) != 0 {
+			function = detailsSplit[len(detailsSplit)-1]
 		}
 	}
 
-	// split file path
-	filePaths := strings.Split(file, "/")
-	if len(filePaths) <= 5 {
-		trace = strings.Join(filePaths, "/")
-		return SetContext(ctx, Trace(fmt.Sprintf("%s-(%s)", trace, function)), Function(function))
-	}
-
-	// trim file path
-	filePaths = filePaths[len(filePaths)-5:]
-	trace = strings.Join(filePaths, "/")
-	return SetContext(ctx, Trace(fmt.Sprintf("%s-(%s)", trace, function)), Function(function))
+	return SetContext(ctx, Trace(fmt.Sprintf("%s-(%s)", invoker.File, function)), Function(function))
 }
 
 // TraceFunction.GetContext

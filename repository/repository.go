@@ -16,7 +16,7 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 
 	// opt 1
 	err = customerror.WrapError(ctx,
-		errors.Join(errors.New("expected repository error 1"), errors.New("expected repository error 2")),
+		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
 		constant.ServiceMesocarp,
 		customerror.ErrorTypeDB,
 		customerror.OptionalParameter{
@@ -27,7 +27,7 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 	// // opt 2
 	// err = customerror.
 	// 	Init(ctx,
-	// 		errors.Join(errors.New("expected repository error 1"), errors.New("expected repository error 2")),
+	// 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
 	// 		constant.ServiceMesocarp,
 	// 		customerror.ErrorTypeDB,
 	// 	).
@@ -38,7 +38,7 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 	// // opt 3 - fluent interface design pattern
 	// err = customerror.
 	// 	Init(ctx,
-	// 		errors.Join(errors.New("expected repository error 1"), errors.New("expected repository error 2")),
+	// 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
 	// 		constant.ServiceMesocarp,
 	// 		customerror.ErrorTypeDB,
 	// 	).
