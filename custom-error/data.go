@@ -8,7 +8,7 @@ import (
 var (
 	allowDataAttachment = true
 
-	// map of field name that is PII
+	// map of field name marked as PII
 	// key must be in lowercase
 	piiFieldNameMap = map[string]bool{
 		"phoneno": true,

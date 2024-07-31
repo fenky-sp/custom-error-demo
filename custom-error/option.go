@@ -4,44 +4,48 @@ import (
 	"context"
 )
 
-type Option func(*errorMetadata)
+type metadataSetter func(*metadata)
 
-func WithContext(input context.Context) Option {
-	return func(m *errorMetadata) {
-		m.Context = input
+func contextMetadataSetter(input context.Context) metadataSetter {
+	return func(md *metadata) {
+		md.ctx = input
 	}
 }
 
-func WithErrorType(input string) Option {
-	return func(m *errorMetadata) {
-		m.ErrorType = input
+func errorTypeMetadataSetter(input string) metadataSetter {
+	return func(md *metadata) {
+		md.errType = input
 	}
 }
 
-func WithPIC(input string) Option {
-	return func(m *errorMetadata) {
-		m.PIC = input
+func picMetadataSetter(input string) metadataSetter {
+	return func(md *metadata) {
+		md.pic = input
 	}
 }
 
-func WithRequest(input interface{}) Option {
-	return func(t *errorMetadata) {
-		t.Request = convertContextualErrorDataToString(input)
+func requestMetadataSetter(input any) metadataSetter {
+	return func(md *metadata) {
+		md.req = convertContextualErrorDataToString(input)
 	}
 }
 
-func WithResponse(input interface{}) Option {
-	return func(t *errorMetadata) {
-		t.Response = convertContextualErrorDataToString(input)
+func responseMetadataSetter(input any) metadataSetter {
+	return func(md *metadata) {
+		md.res = convertContextualErrorDataToString(input)
 	}
 }
 
-func (m *errorMetadata) WithRequest(input interface{}) *errorMetadata {
-	m.Request = convertContextualErrorDataToString(input)
-	return m
+func (md *metadata) WithRequest(request any) CustomError {
+	md.setMetadata(
+		requestMetadataSetter(request),
+	)
+	return md
 }
 
-func (m *errorMetadata) WithResponse(input interface{}) *errorMetadata {
-	m.Response = convertContextualErrorDataToString(input)
-	return m
+func (md *metadata) WithResponse(response any) CustomError {
+	md.setMetadata(
+		responseMetadataSetter(response),
+	)
+	return md
 }

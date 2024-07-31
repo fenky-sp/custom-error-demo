@@ -14,7 +14,7 @@ func convertContextualErrorDataToString(input any) string {
 
 	data, containInterface := processContextualErrorData(input)
 	if containInterface {
-		output = "data is masked because it contains interface"
+		output = "entire data is masked because it contains interface"
 	} else {
 		dataJsonBytes, _ := json.Marshal(data)
 		output = string(dataJsonBytes)
@@ -54,4 +54,42 @@ func processContextualErrorData(input any) (interface{}, bool) {
 	containInterface = di.ContainInterface
 
 	return output, containInterface
+}
+
+type errorData struct {
+	errs []error
+}
+
+func (ed *errorData) getErrors(err error) {
+	err = extractError(err)
+
+	switch x := err.(type) {
+
+	case interface{ Unwrap() error }:
+		err = x.Unwrap()
+		if err != nil {
+			ed.getErrors(err) // check recursively if error is wrapped
+		}
+
+	case interface{ Unwrap() []error }:
+		wrappedErrors := x.Unwrap()
+		for _, wrappedError := range wrappedErrors {
+			ed.getErrors(wrappedError)
+		}
+
+	default:
+		ed.errs = append(ed.errs, err)
+
+	}
+}
+
+func extractError(err error) error {
+	switch err.(type) {
+	case *metadata:
+		if em, ok := err.(*metadata); ok {
+			return em.err
+		}
+	}
+
+	return err
 }

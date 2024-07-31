@@ -24,27 +24,15 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 		},
 	)
 
-	// // opt 2
+	// // opt 2 - fluent interface design pattern
 	// err = customerror.
-	// 	Init(ctx,
-	// 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
-	// 		constant.ServiceMesocarp,
-	// 		customerror.ErrorTypeDB,
-	// 	).
-	// 	WithOptions(
-	// 		customerror.WithRequest(input),
-	// 	)
-
-	// // opt 3 - fluent interface design pattern
-	// err = customerror.
-	// 	Init(ctx,
+	// 	Create(ctx,
 	// 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
 	// 		constant.ServiceMesocarp,
 	// 		customerror.ErrorTypeDB,
 	// 	).
 	// 	WithRequest(input).
-	// 	WithResponse("dummy response").
-	// 	Create()
+	// 	WithResponse("dummy response")
 
 	return
 }
