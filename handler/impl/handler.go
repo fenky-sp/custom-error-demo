@@ -13,7 +13,7 @@ import (
 )
 
 func (h *handler) HandlerFunc(ctx context.Context, input model.HandlerInput) (output model.HandlerOutput, err error) {
-	ctx = ctxHlp.SetContext(ctx, ctxHlp.DefaultTraceFunctionOption())
+	ctx = ctxHlp.SetContext(ctx, ctxHlp.DefaultTraceFunction())
 
 	_, err = usecase.UsecaseFunc(ctx, model.UsecaseInput{
 		Phone:           input.Phone,

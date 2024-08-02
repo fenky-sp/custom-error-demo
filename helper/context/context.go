@@ -1,4 +1,4 @@
-package helper
+package context
 
 import (
 	"context"
@@ -8,17 +8,22 @@ import (
 	rtHlp "github.com/fenky-sp/custom-error-demo/helper/runtime"
 )
 
-type (
-	TraceFunction string
-	Function      string
-	Trace         string
-	contextKey    string
-)
+type KeyValue interface {
+	SetContext(ctx context.Context) context.Context
+	GetContext(ctx context.Context) string
+}
 
-const (
-	KeyFunction contextKey = "func"
-	KeyTrace    contextKey = "trace"
-)
+// set context values from multiple options into context
+func SetContext(ctx context.Context, kvs ...KeyValue) context.Context {
+	for _, kv := range kvs {
+		ctx = kv.SetContext(ctx)
+	}
+	return ctx
+}
+
+func DefaultTraceFunction() TraceFunction {
+	return TraceFunction("")
+}
 
 // TraceFunction.SetContext
 // set TraceFunction context value
@@ -48,10 +53,6 @@ func (tf TraceFunction) SetContext(ctx context.Context) context.Context {
 // get TraceFunction context value
 func (tf TraceFunction) GetContext(ctx context.Context) string {
 	return string(tf)
-}
-
-func DefaultTraceFunctionOption() Option {
-	return TraceFunction("")
 }
 
 // Function.SetContext
@@ -91,17 +92,4 @@ func (t Trace) GetContext(ctx context.Context) string {
 		value = val
 	}
 	return value
-}
-
-type Option interface {
-	SetContext(ctx context.Context) context.Context
-	GetContext(ctx context.Context) string
-}
-
-// set context values from multiple options into context
-func SetContext(ctx context.Context, opts ...Option) context.Context {
-	for _, opt := range opts {
-		ctx = opt.SetContext(ctx)
-	}
-	return ctx
 }
