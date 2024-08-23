@@ -51,7 +51,7 @@ func Create(
 // GetStandardError converts custom error to standard error
 func GetStandardError(err error) error {
 	ed := &errorData{}
-	ed.getErrors(err)
+	ed.getError(err)
 	return errors.Join(ed.errs...)
 }
 

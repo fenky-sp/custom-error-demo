@@ -11,6 +11,6 @@ const (
 
 	ErrorTypeAuthorization = "authorization"
 	ErrorTypeParsing       = "parsing"
-	ErrorTypeConverting    = "conversion"
+	ErrorTypeConversion    = "conversion"
 	ErrorTypeValidation    = "validation"
 )

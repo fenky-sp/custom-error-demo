@@ -7,16 +7,10 @@ import (
 
 var (
 	allowDataAttachment = true
-
-	// map of field name marked as PII
-	// key must be in lowercase
-	piiFieldNameMap = map[string]bool{
-		"phoneno": true,
-	}
 )
 
 type dataIterator struct {
-	ContainInterface bool
+	ContainsInterface bool
 }
 
 func (di *dataIterator) iterateData(
@@ -36,13 +30,13 @@ func (di *dataIterator) iterateData(
 	switch kind {
 
 	case reflect.Interface:
-		di.ContainInterface = true
+		di.ContainsInterface = true
 
 	case reflect.Struct:
 		t := value.Type()
 		for i := 0; i < t.NumField(); i++ {
 			di.iterateData(value.Field(i), t.Field(i).Tag, t.Field(i).Name, fn)
-			if di.ContainInterface {
+			if di.ContainsInterface {
 				break
 			}
 		}
@@ -50,7 +44,7 @@ func (di *dataIterator) iterateData(
 	case reflect.Slice, reflect.Array:
 		for i := 0; i < value.Len(); i++ {
 			di.iterateData(value.Index(i), tag, fieldName, fn)
-			if di.ContainInterface {
+			if di.ContainsInterface {
 				break
 			}
 		}

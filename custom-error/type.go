@@ -1,6 +1,6 @@
 package customerror
 
 type OptionalParameter struct {
-	Request  interface{} // request when error occured
-	Response interface{} // response when error occured
+	Request  any // request when error occured
+	Response any // response when error occured
 }

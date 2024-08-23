@@ -12,8 +12,8 @@ func convertContextualErrorDataToString(input any) string {
 
 	var output string
 
-	data, containInterface := processContextualErrorData(input)
-	if containInterface {
+	data, containsInterface := processContextualErrorData(input)
+	if containsInterface {
 		output = "entire data is masked because it contains interface"
 	} else {
 		dataJsonBytes, _ := json.Marshal(data)
@@ -26,41 +26,41 @@ func convertContextualErrorDataToString(input any) string {
 func processContextualErrorData(input any) (interface{}, bool) {
 	var (
 		output           interface{}
-		containInterface bool
+		containsInterface bool
 	)
 
 	if input == nil {
-		return output, containInterface
+		return output, containsInterface
 	}
 
 	inputValue := reflect.ValueOf(input)
 
 	inputBytes, err := json.Marshal(inputValue.Interface())
 	if err != nil {
-		return output, containInterface
+		return output, containsInterface
 	}
 
 	newValue := reflect.New(inputValue.Type()) // create zero value of same type as input value
 
 	err = json.Unmarshal(inputBytes, newValue.Interface())
 	if err != nil {
-		return output, containInterface
+		return output, containsInterface
 	}
 
 	di := &dataIterator{}
 	di.iterateData(newValue, "", "", processData)
 
 	output = newValue.Interface()
-	containInterface = di.ContainInterface
+	containsInterface = di.ContainsInterface
 
-	return output, containInterface
+	return output, containsInterface
 }
 
 type errorData struct {
 	errs []error
 }
 
-func (ed *errorData) getErrors(err error) {
+func (ed *errorData) getError(err error) {
 	err = extractError(err)
 
 	switch x := err.(type) {
@@ -68,13 +68,13 @@ func (ed *errorData) getErrors(err error) {
 	case interface{ Unwrap() error }:
 		err = x.Unwrap()
 		if err != nil {
-			ed.getErrors(err) // check recursively if error is wrapped
+			ed.getError(err) // check recursively if error is wrapped
 		}
 
 	case interface{ Unwrap() []error }:
 		wrappedErrors := x.Unwrap()
 		for _, wrappedError := range wrappedErrors {
-			ed.getErrors(wrappedError)
+			ed.getError(wrappedError)
 		}
 
 	default:
