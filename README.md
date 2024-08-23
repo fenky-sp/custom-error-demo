@@ -55,7 +55,7 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 ```
 
 ### Options
-There are two options for custom error initiation. We need to determine which one before proceeding to implementation.
+There are two options for custom error initiation. We need to determine which one to use before proceeding to implementation.
 
 #### Option 1
 Custom error is initiated with mandatory and optional metadata at once.
