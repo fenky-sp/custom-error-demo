@@ -1,18 +1,18 @@
 # custom-error-demo
 
-## description
-this repository contains demo for contextual error implementation
+## Description
+This repository contains demo for contextual error implementation
 
-## utility
-there are two utilities used in this demo
-- context modifier: modify context to store the trace of process
-- error wrapper: custom error interface that can store metadata of: context, pic, error type, request, response and so on
+## Utility
+There are two utilities used in this demo
+- Context modifier: modify context to store the trace of process
+- Error wrapper: custom error interface that can store metadata of: context, pic, error type, request, response and so on
 
-## flow
-flow of process: `main.go` > `handler` > `usecase` > `repository`
+## Flow
+Flow of process: `main.go` > `handler` > `usecase` > `repository` then back to the beginning
 
-## error initiation
-error is thrown and wrapped in `repository` layer
+## Error Initiation
+Error is thrown and wrapped in `repository` layer
 ```go
 package repository
 
@@ -30,7 +30,7 @@ import (
 func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output model.RepositoryOutput, err error) {
 	ctx = ctxHlp.SetContext(ctx, ctxHlp.TraceFunction(funcHlp.GetFunctionName(RepositoryFunc)))
 
-	// opt 1
+	// option 1
 	err = customerror.WrapError(ctx,
 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
 		constant.ServiceMesocarp,
@@ -40,7 +40,7 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 		},
 	)
 
-	// // opt 2 - fluent interface design pattern
+	// // option 2 - fluent interface design pattern
 	// err = customerror.
 	// 	Create(ctx,
 	// 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
@@ -54,22 +54,19 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 }
 ```
 
-### options
-there are three options for custom error initiation. we need to determine which one before proceeding to implementation.
+### Options
+There are two options for custom error initiation. We need to determine which one before proceeding to implementation.
 
-#### option 1
-custom error is initiated with mandatory and optional metadata at once.
+#### Option 1
+Custom error is initiated with mandatory and optional metadata at once.
 
-I prefer this option because I have a concern engineers would forget to add metadata like request and response if we proceed with option 2 and 3
+I prefer this option because I have a concern where Engineers would forget to add metadata like request and response if we proceed with option 2
 
-#### option 2
-custom error is initiated with mandatory metadata only. optional metadata is added in bulk with method `WithOptions()`.
+#### Option 2
+Custom error is initiated with mandatory metadata only. Optional metadata could be added with method chaining, adopting fluent interface design pattern.
 
-#### option 3
-custom error is initiated with mandatory metadata only. optional metadata could be added with method chaining, adopting fluent interface design pattern. `Create()` function have to be called at the end in order to finish the custom error creation.
-
-## output
-error is logged at `main.go`
+## Output
+Error is logged at `main.go`
 ```go
 package main
 
@@ -106,7 +103,7 @@ func main() {
 }
 ```
 
-### log
+### Log
 ```JSON
 DEBUG custom err (1): expected main error 1
 expected handler error 1

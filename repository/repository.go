@@ -14,7 +14,7 @@ import (
 func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output model.RepositoryOutput, err error) {
 	ctx = ctxHlp.SetContext(ctx, ctxHlp.TraceFunction(funcHlp.GetFunctionName(RepositoryFunc)))
 
-	// opt 1
+	// option 1
 	err = customerror.WrapError(ctx,
 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
 		constant.ServiceMesocarp,
@@ -24,7 +24,7 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 		},
 	)
 
-	// // opt 2 - fluent interface design pattern
+	// // option 2 - fluent interface design pattern
 	// err = customerror.
 	// 	Create(ctx,
 	// 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
