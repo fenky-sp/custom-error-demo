@@ -25,7 +25,7 @@ func convertContextualErrorDataToString(input any) string {
 
 func processContextualErrorData(input any) (interface{}, bool) {
 	var (
-		output           interface{}
+		output            interface{}
 		containsInterface bool
 	)
 
