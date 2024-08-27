@@ -92,7 +92,7 @@ func main() {
 
 		fmt.Printf("DEBUG custom err (2): %+v\n\n", err)
 
-		fmt.Printf("DEBUG just err: %+v\n\n", customerror.GetStandardError(err))
+		fmt.Printf("DEBUG standard err: %+v\n\n", customerror.GetStandardError(err))
 
 		if customerror.Is(err, constant.RepositoryErr2) {
 			fmt.Println("DEBUG error is identified")
@@ -113,7 +113,7 @@ DEBUG custom err (2): expected main error 1
 expected handler error 1
 {"error":"expected usecase error 1\n{\"error\":\"expected repository error 1\\nexpected repository error 2\",\"func\":\"RepositoryFunc\",\"lines\":[\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go:18\"],\"pic\":\"mesocarp\",\"request\":\"{\\\"PhoneNo\\\":\\\"***\\\",\\\"RequestTimeUnix\\\":1722425795}\",\"trace\":\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/usecase/usecase.go-(UsecaseFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go-(RepositoryFunc)\",\"type\":\"db\"}","func":"HandlerFunc","lines":["/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go:23"],"pic":"mesocarp","request":"{\"Phone\":\"***\"}","trace":"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)","type":"validation"}
 
-DEBUG just err: expected main error 1
+DEBUG standard err: expected main error 1
 expected handler error 1
 expected usecase error 1
 expected repository error 1

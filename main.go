@@ -22,7 +22,7 @@ func main() {
 
 		fmt.Printf("DEBUG custom err (2): %+v\n\n", err)
 
-		fmt.Printf("DEBUG just err: %+v\n\n", customerror.GetStandardError(err))
+		fmt.Printf("DEBUG standard err: %+v\n\n", customerror.GetStandardError(err))
 
 		if customerror.Is(err, constant.RepositoryErr2) {
 			fmt.Println("DEBUG error is identified")
