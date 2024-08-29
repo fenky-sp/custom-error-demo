@@ -30,4 +30,12 @@ func main() {
 			fmt.Println("DEBUG error is not identified")
 		}
 	}
+
+	fmt.Printf("\n\n\n")
+	err = customerror.Create(context.Background(), errors.New("expected usecase error 1"), "pic", "error-type")
+	if customerror.Is(err, constant.UsecaseErr1) {
+		fmt.Println("DEBUG 1 error is identified")
+	} else {
+		fmt.Println("DEBUG 1 error is not identified")
+	}
 }

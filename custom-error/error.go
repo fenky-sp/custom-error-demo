@@ -63,5 +63,11 @@ func GetStandardError(err error) error {
 
 // Is checks if error match the target error
 func Is(err error, target error) bool {
-	return errors.Is(GetStandardError(err), target)
+	errStd := GetStandardError(err)
+	targetStd := GetStandardError(target)
+	output := errors.Is(errStd, targetStd) // compare error
+	if !output && errStd != nil && targetStd != nil {
+		output = errStd.Error() == targetStd.Error() // compare error message
+	}
+	return output
 }
