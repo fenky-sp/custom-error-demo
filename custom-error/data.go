@@ -60,6 +60,9 @@ func (di *dataIterator) iterateData(
 			tmp = reflect.Indirect(tmp)
 
 			di.iterateData(tmp, tag, fieldName, fn)
+			if di.ContainsInterface {
+				break
+			}
 
 			value.SetMapIndex(k, tmp)
 		}
