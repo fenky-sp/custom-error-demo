@@ -83,3 +83,7 @@ func (md *metadata) Error() string {
 
 	return string(result)
 }
+
+func (md *metadata) Unwrap() error {
+	return GetStandardError(md.err)
+}

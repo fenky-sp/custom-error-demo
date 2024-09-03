@@ -7,6 +7,7 @@ import (
 
 type CustomError interface {
 	error
+	Unwrap() error
 	WithRequest(request any) CustomError
 	WithResponse(response any) CustomError
 }
@@ -59,9 +60,4 @@ func GetStandardError(err error) error {
 		return ed.errs[0]
 	}
 	return errors.Join(ed.errs...)
-}
-
-// Is checks if error match the target error
-func Is(err error, target error) bool {
-	return errors.Is(GetStandardError(err), target)
 }
