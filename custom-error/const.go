@@ -1,8 +1,8 @@
 package customerror
 
 const (
-	CtxErrTagKey      = "ctxerr"
-	CtxErrTagValuePii = "pii"
+	ctxErrTagKey      = "ctxerr"
+	ctxErrTagValuePii = "pii"
 )
 
 const (
