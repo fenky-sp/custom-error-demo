@@ -12,40 +12,54 @@ func contextMetadataSetter(input context.Context) metadataSetter {
 	}
 }
 
-func errorTypeMetadataSetter(input string) metadataSetter {
+func ErrorTypeMetadataSetter(input string) metadataSetter {
 	return func(md *metadata) {
 		md.errType = input
 	}
 }
 
-func picMetadataSetter(input string) metadataSetter {
+func PicMetadataSetter(input string) metadataSetter {
 	return func(md *metadata) {
 		md.pic = input
 	}
 }
 
-func requestMetadataSetter(input any) metadataSetter {
+func RequestMetadataSetter(input any) metadataSetter {
 	return func(md *metadata) {
 		md.req = convertContextualErrorDataToString(input)
 	}
 }
 
-func responseMetadataSetter(input any) metadataSetter {
+func ResponseMetadataSetter(input any) metadataSetter {
 	return func(md *metadata) {
 		md.res = convertContextualErrorDataToString(input)
 	}
 }
 
+func (md *metadata) WithErrorType(errorType string) CustomError {
+	md.setMetadata(
+		ErrorTypeMetadataSetter(errorType),
+	)
+	return md
+}
+
+func (md *metadata) WithPIC(pic string) CustomError {
+	md.setMetadata(
+		PicMetadataSetter(pic),
+	)
+	return md
+}
+
 func (md *metadata) WithRequest(request any) CustomError {
 	md.setMetadata(
-		requestMetadataSetter(request),
+		RequestMetadataSetter(request),
 	)
 	return md
 }
 
 func (md *metadata) WithResponse(response any) CustomError {
 	md.setMetadata(
-		responseMetadataSetter(response),
+		ResponseMetadataSetter(response),
 	)
 	return md
 }

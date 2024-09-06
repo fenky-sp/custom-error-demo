@@ -28,7 +28,7 @@ func main() {
 	// check contextual error with errors.Is()
 	fmt.Printf("\n\n\n")
 	fmt.Println("DEBUG errors.Is(err, errors.New(\"expected repository error 2\")):", errors.Is(err, errors.New("expected repository error 2"))) // false
-	fmt.Println("DEBUG errors.Is(err, constant.UsecaseErr1):", errors.Is(err, constant.RepositoryErr2))                                          // true
+	fmt.Println("DEBUG errors.Is(err, constant.RepositoryErr2):", errors.Is(err, constant.RepositoryErr2))                                       // true
 
 	// err = customerror.Create(ctx, errors.New("temp"), constant.ServiceMesocarp, customerror.ErrorTypeValidation).
 	// 	WithRequest(map[int]struct {

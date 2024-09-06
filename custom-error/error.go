@@ -8,45 +8,40 @@ import (
 type CustomError interface {
 	error
 	Unwrap() error
+	WithErrorType(errorType string) CustomError
+	WithPIC(pic string) CustomError
 	WithRequest(request any) CustomError
 	WithResponse(response any) CustomError
 }
 
-func WrapError(
+func Wrap(
 	ctx context.Context,
 	rootErr error,
-	pic string,
-	errorType string,
-	optional OptionalParameter,
+	metadataSetters ...metadataSetter,
 ) CustomError {
 	if rootErr == nil {
 		return nil
 	}
 
-	return initialize(rootErr).setMetadata(
-		contextMetadataSetter(ctx),
-		errorTypeMetadataSetter(errorType),
-		picMetadataSetter(pic),
-		requestMetadataSetter(optional.Request),
-		responseMetadataSetter(optional.Response),
-	)
+	var ms []metadataSetter
+	ms = append(ms, contextMetadataSetter(ctx))
+	ms = append(ms, metadataSetters...)
+
+	return initialize(rootErr).setMetadata(ms...)
 }
 
 func Create(
 	ctx context.Context,
 	rootErr error,
-	pic string,
-	errorType string,
 ) CustomError {
 	if rootErr == nil {
 		return nil
 	}
 
-	return initialize(rootErr).setMetadata(
-		contextMetadataSetter(ctx),
-		errorTypeMetadataSetter(errorType),
-		picMetadataSetter(pic),
-	)
+	var ms []metadataSetter
+	ms = append(ms, contextMetadataSetter(ctx))
+
+	return initialize(rootErr).setMetadata(ms...)
 }
 
 // GetStandardError converts custom error to standard error

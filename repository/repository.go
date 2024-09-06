@@ -15,22 +15,17 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 	ctx = ctxHlp.SetContext(ctx, ctxHlp.TraceFunction(funcHlp.GetFunctionName(RepositoryFunc)))
 
 	// option 1
-	err = customerror.WrapError(ctx,
+	err = customerror.Wrap(ctx,
 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
-		constant.ServiceMesocarp,
-		customerror.ErrorTypeDB,
-		customerror.OptionalParameter{
-			Request: input,
-		},
+		customerror.PicMetadataSetter(constant.ServiceMesocarp),
+		customerror.ErrorTypeMetadataSetter(customerror.ErrorTypeDB),
+		customerror.RequestMetadataSetter(input),
 	)
 
 	// // option 2 - fluent interface design pattern
-	// err = customerror.
-	// 	Create(ctx,
-	// 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
-	// 		constant.ServiceMesocarp,
-	// 		customerror.ErrorTypeDB,
-	// 	).
+	// err = customerror.Create(ctx, errors.Join(constant.RepositoryErr1, constant.RepositoryErr2)).
+	// 	WithPIC(constant.ServiceMesocarp).
+	// 	WithErrorType(customerror.ErrorTypeDB).
 	// 	WithRequest(input).
 	// 	WithResponse("dummy response")
 

@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/fenky-sp/custom-error-demo/constant"
+	customerror "github.com/fenky-sp/custom-error-demo/custom-error"
 	ctxHlp "github.com/fenky-sp/custom-error-demo/helper/context"
 	funcHlp "github.com/fenky-sp/custom-error-demo/helper/function"
 	"github.com/fenky-sp/custom-error-demo/model"
@@ -18,7 +19,7 @@ func UsecaseFunc(ctx context.Context, input model.UsecaseInput) (output model.Us
 		PhoneNo:         input.Phone,
 		RequestTimeUnix: input.RequestTimeUnix,
 	})
-	err = errors.Join(constant.UsecaseErr1, err)
+	err = customerror.Create(ctx, errors.Join(constant.UsecaseErr1, err))
 
 	return
 }

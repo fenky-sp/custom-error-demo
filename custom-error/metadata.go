@@ -37,7 +37,7 @@ func initialize(rootErr error) *metadata {
 		return err
 	}
 
-	err.lines = append(err.lines, fmt.Sprintf("%v:%v", invoker.File, invoker.Line))
+	err.lines = append(err.lines, fmt.Sprintf("%s:%d: %+v", invoker.File, invoker.Line, GetStandardError(rootErr)))
 
 	return err
 }

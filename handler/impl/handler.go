@@ -20,14 +20,11 @@ func (h *handler) HandlerFunc(ctx context.Context, input model.HandlerInput) (ou
 		RequestTimeUnix: time.Now().Unix(),
 	})
 	err = errors.Join(constant.HandlerErr1,
-		customerror.WrapError(ctx,
-			err,
-			constant.ServiceMesocarp,
-			customerror.ErrorTypeValidation,
-			customerror.OptionalParameter{
-				Request: input,
-			},
-		))
+		customerror.Create(ctx, err).
+			WithPIC(constant.ServiceMesocarp).
+			WithErrorType(customerror.ErrorTypeValidation).
+			WithRequest(input),
+	)
 
 	return
 }

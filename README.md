@@ -31,22 +31,17 @@ func RepositoryFunc(ctx context.Context, input model.RepositoryInput) (output mo
 	ctx = ctxHlp.SetContext(ctx, ctxHlp.TraceFunction(funcHlp.GetFunctionName(RepositoryFunc)))
 
 	// option 1
-	err = customerror.WrapError(ctx,
+	err = customerror.Wrap(ctx,
 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
-		constant.ServiceMesocarp,
-		customerror.ErrorTypeDB,
-		customerror.OptionalParameter{
-			Request: input,
-		},
+		customerror.PicMetadataSetter(constant.ServiceMesocarp),
+		customerror.ErrorTypeMetadataSetter(customerror.ErrorTypeDB),
+		customerror.RequestMetadataSetter(input),
 	)
 
 	// // option 2 - fluent interface design pattern
-	// err = customerror.
-	// 	Create(ctx,
-	// 		errors.Join(constant.RepositoryErr1, constant.RepositoryErr2),
-	// 		constant.ServiceMesocarp,
-	// 		customerror.ErrorTypeDB,
-	// 	).
+	// err = customerror.Create(ctx, errors.Join(constant.RepositoryErr1, constant.RepositoryErr2)).
+	// 	WithPIC(constant.ServiceMesocarp).
+	// 	WithErrorType(customerror.ErrorTypeDB).
 	// 	WithRequest(input).
 	// 	WithResponse("dummy response")
 
@@ -93,13 +88,12 @@ func main() {
 		fmt.Printf("DEBUG custom err (2): %+v\n\n", err)
 
 		fmt.Printf("DEBUG standard err: %+v\n\n", customerror.GetStandardError(err))
-
-		if customerror.Is(err, constant.RepositoryErr2) {
-			fmt.Println("DEBUG error is identified")
-		} else {
-			fmt.Println("DEBUG error is not identified")
-		}
 	}
+
+	// check contextual error with errors.Is()
+	fmt.Printf("\n\n\n")
+	fmt.Println("DEBUG errors.Is(err, errors.New(\"expected repository error 2\")):", errors.Is(err, errors.New("expected repository error 2"))) // false
+	fmt.Println("DEBUG errors.Is(err, constant.RepositoryErr2):", errors.Is(err, constant.RepositoryErr2))                                       // true
 }
 ```
 
@@ -107,11 +101,11 @@ func main() {
 ```JSON
 DEBUG custom err (1): expected main error 1
 expected handler error 1
-{"error":"expected usecase error 1\n{\"error\":\"expected repository error 1\\nexpected repository error 2\",\"func\":\"RepositoryFunc\",\"lines\":[\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go:18\"],\"pic\":\"mesocarp\",\"request\":\"{\\\"PhoneNo\\\":\\\"***\\\",\\\"RequestTimeUnix\\\":1722425795}\",\"trace\":\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/usecase/usecase.go-(UsecaseFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go-(RepositoryFunc)\",\"type\":\"db\"}","func":"HandlerFunc","lines":["/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go:23"],"pic":"mesocarp","request":"{\"Phone\":\"***\"}","trace":"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)","type":"validation"}
+{"error":"expected usecase error 1\n{\"error\":\"expected repository error 1\\nexpected repository error 2\",\"func\":\"RepositoryFunc\",\"lines\":[\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go:18: expected repository error 1\\nexpected repository error 2\"],\"pic\":\"mesocarp\",\"request\":\"{\\\"PhoneNo\\\":\\\"***\\\",\\\"RequestTimeUnix\\\":1725430858}\",\"trace\":\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/usecase/usecase.go-(UsecaseFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go-(RepositoryFunc)\",\"type\":\"db\"}","func":"HandlerFunc","lines":["/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/usecase/usecase.go:22: expected usecase error 1\nexpected repository error 1\nexpected repository error 2","/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go:23: expected usecase error 1\nexpected repository error 1\nexpected repository error 2"],"pic":"mesocarp","request":"{\"Phone\":\"***\"}","trace":"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)","type":"validation"}
 
 DEBUG custom err (2): expected main error 1
 expected handler error 1
-{"error":"expected usecase error 1\n{\"error\":\"expected repository error 1\\nexpected repository error 2\",\"func\":\"RepositoryFunc\",\"lines\":[\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go:18\"],\"pic\":\"mesocarp\",\"request\":\"{\\\"PhoneNo\\\":\\\"***\\\",\\\"RequestTimeUnix\\\":1722425795}\",\"trace\":\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/usecase/usecase.go-(UsecaseFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go-(RepositoryFunc)\",\"type\":\"db\"}","func":"HandlerFunc","lines":["/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go:23"],"pic":"mesocarp","request":"{\"Phone\":\"***\"}","trace":"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)","type":"validation"}
+{"error":"expected usecase error 1\n{\"error\":\"expected repository error 1\\nexpected repository error 2\",\"func\":\"RepositoryFunc\",\"lines\":[\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go:18: expected repository error 1\\nexpected repository error 2\"],\"pic\":\"mesocarp\",\"request\":\"{\\\"PhoneNo\\\":\\\"***\\\",\\\"RequestTimeUnix\\\":1725430858}\",\"trace\":\"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/usecase/usecase.go-(UsecaseFunc)#/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/repository/repository.go-(RepositoryFunc)\",\"type\":\"db\"}","func":"HandlerFunc","lines":["/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/usecase/usecase.go:22: expected usecase error 1\nexpected repository error 1\nexpected repository error 2","/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go:23: expected usecase error 1\nexpected repository error 1\nexpected repository error 2"],"pic":"mesocarp","request":"{\"Phone\":\"***\"}","trace":"/Users/fenky/go/src/github.com/fenky-sp/custom-error-demo/handler/impl/handler.go-(HandlerFunc)","type":"validation"}
 
 DEBUG standard err: expected main error 1
 expected handler error 1
@@ -119,5 +113,9 @@ expected usecase error 1
 expected repository error 1
 expected repository error 2
 
-DEBUG error is identified
+
+
+
+DEBUG errors.Is(err, errors.New("expected repository error 2")): false
+DEBUG errors.Is(err, constant.RepositoryErr2): true
 ```
